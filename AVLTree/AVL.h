@@ -14,9 +14,10 @@ public:
 	TreeNode* LefttRotate();
 	TreeNode* rotate();
 	void TreeDestroy();
+	TreeNode* search(TreeType val);
 	TreeNode* InsertHeap(TreeType val);
+	TreeNode* RemoveHelp(TreeType val);
 	void InOrder();
-
 
 private:
 	TreeType _val;
@@ -30,6 +31,8 @@ public:
 	AVLTree();
 	~AVLTree();
 	void Insert(TreeType val);
+	void Remove(TreeType val);
+	TreeNode*Search(TreeType val);
 	friend void operator<< (std::ostream& out, const AVLTree& Tree);
 
 private:

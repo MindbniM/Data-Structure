@@ -14,13 +14,13 @@ TreeNode::~TreeNode()
 int TreeNode::Height()
 {
 	if (this == nullptr)
-		return -1;
+		return 0;
 	return _height;
 }
 int TreeNode::TreeHeight()
 {
 	if (this == nullptr)
-		return -1;
+		return 0;
 	return fmax(_left->TreeHeight(),_right->TreeHeight())+1;
 }
 int TreeNode::balanceFactor()
@@ -91,6 +91,61 @@ TreeNode* TreeNode::InsertHeap(TreeType val)
 	_height = TreeHeight();
 	TreeNode* node=rotate();
 	return node;
+}
+TreeNode* TreeNode::RemoveHelp(TreeType val)
+{
+	if (this == nullptr)
+		return nullptr;
+	TreeNode* root = this;
+	if (_val > val)
+	{
+		_left = _left->RemoveHelp(val);
+	}
+	else if (_val < val)
+	{
+		_right = _right->RemoveHelp(val);
+	}
+	else
+	{
+		if (!_left || !_right)
+		{
+			delete(this);
+			return nullptr;
+		}
+		else if (_left && _right)
+		{
+			TreeNode* temp = _right;
+			while (temp->_left != nullptr)
+			{
+				temp = temp->_left;
+			}
+			TreeType n = temp->_val;
+			_right = _right->RemoveHelp(n);
+			_val = n;
+		}
+		else
+		{
+			TreeNode* node = _left == nullptr ? _right : _left;
+			delete(this);
+			root = node;
+		}
+	}
+	root->TreeHeight();
+	root = root->rotate();
+	return root;
+}
+TreeNode* TreeNode::search(TreeType num) 
+{
+	TreeNode* cur = this;
+	while (cur != nullptr) {
+		if (cur->_val < num)
+			cur = cur->_right;
+		else if (cur->_val > num)
+			cur = cur->_left;
+		else
+			break;
+	}
+	return cur;
 }
 void TreeNode::InOrder()
 {
