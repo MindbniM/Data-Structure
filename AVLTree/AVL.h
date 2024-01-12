@@ -1,7 +1,8 @@
-#pragma once
+#ifndef AVL.H
+#define AVL.H 0
 #include<iostream>
 #include<math.h>
-typedef int TreeType;
+template<class TreeType>
 class TreeNode
 {
 public:
@@ -10,32 +11,38 @@ public:
 	~TreeNode();
 	int TreeHeight();
 	int balanceFactor();//获取平衡因子
-	TreeNode* RightRotate();
-	TreeNode* LefttRotate();
-	TreeNode* rotate();
+	TreeNode<TreeType>* RightRotate();
+	TreeNode<TreeType>* LefttRotate();
+	TreeNode<TreeType>* rotate();
 	void TreeDestroy();
-	TreeNode* search(TreeType val);
-	TreeNode* InsertHeap(TreeType val);
-	TreeNode* RemoveHelp(TreeType val);
+	TreeNode<TreeType>* search(TreeType val);
+	TreeNode<TreeType>* InsertHeap(TreeType val, int (*comp)(TreeType, TreeType));
+	TreeNode<TreeType>* RemoveHelp(TreeType val);
 	void InOrder();
 
 private:
 	TreeType _val;
 	int _height;
-	TreeNode* _left;
-	TreeNode* _right;
+	TreeNode<TreeType>* _left;
+	TreeNode<TreeType>* _right;
 };
+template<class TreeType>
 class AVLTree
 {
 public:
 	AVLTree();
 	~AVLTree();
-	void Insert(TreeType val);
+	void Insert(TreeType val, int (*comp)(TreeType, TreeType));
 	void Remove(TreeType val);
-	TreeNode*Search(TreeType val);
-	friend void operator<< (std::ostream& out, const AVLTree& Tree);
+	TreeNode<TreeType>* Search(TreeType val);
+	friend void operator<< (std::ostream& out, const AVLTree<TreeType>& Tree);
 
-private:
-	TreeNode* _root;
+//private:
+	TreeNode<TreeType>* _root;
 };
-void operator<< (std::ostream& out, const AVLTree& Tree);
+template<class TreeType>
+void operator<< (std::ostream& out, const AVLTree<TreeType>& Tree);
+
+#include"AVL.cpp"
+#include"TreeNode.cpp"
+#endif

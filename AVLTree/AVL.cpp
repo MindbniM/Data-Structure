@@ -1,27 +1,33 @@
 #include"AVL.h"
-AVLTree::AVLTree()
+template<class TreeType>
+AVLTree<TreeType>::AVLTree()
 	:_root(nullptr)
 {
 
 }
-AVLTree::~AVLTree()
+template<class TreeType>
+AVLTree<TreeType>::~AVLTree()
 {
 	_root->TreeDestroy();
 	_root = nullptr;
 }
-void AVLTree::Insert(TreeType val)
+template<class TreeType>
+void AVLTree<TreeType>::Insert(TreeType val, int (*comp)(TreeType, TreeType))
 {
-	_root = _root->InsertHeap(val);
+	_root = _root->InsertHeap(val,comp);
 }
-void AVLTree::Remove(TreeType val)
+template<class TreeType>
+void AVLTree<TreeType>::Remove(TreeType val)
 {
 	_root = _root->RemoveHelp(val);
 }
-TreeNode* AVLTree::Search(TreeType val)
+template<class TreeType>
+TreeNode<TreeType>* AVLTree<TreeType>::Search(TreeType val)
 {
 	return _root->search(val);
 }
-void operator<< (std::ostream& out, const AVLTree& Tree)
+template<class TreeType>
+void operator<< (std::ostream& out, const AVLTree<TreeType>& Tree)
 {
 	Tree._root->InOrder();
 	out << std::endl;

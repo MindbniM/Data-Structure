@@ -1,35 +1,41 @@
 #include"AVL.h"
-TreeNode::TreeNode(TreeType x)
+template<class TreeType>
+TreeNode<TreeType>::TreeNode(TreeType x)
 	:_val(x)
 	,_left(nullptr)
 	,_right(nullptr)
 	,_height(0)
 {
 }
-TreeNode::~TreeNode()
+template<class TreeType>
+TreeNode<TreeType>::~TreeNode()
 {
 	_left = nullptr;
 	_right = nullptr;
 }
-int TreeNode::Height()
+template<class TreeType>
+int TreeNode<TreeType>::Height()
 {
 	if (this == nullptr)
 		return 0;
 	return _height;
 }
-int TreeNode::TreeHeight()
+template<class TreeType>
+int TreeNode<TreeType>::TreeHeight()
 {
 	if (this == nullptr)
 		return 0;
 	return fmax(_left->TreeHeight(),_right->TreeHeight())+1;
 }
-int TreeNode::balanceFactor()
+template<class TreeType>
+int TreeNode<TreeType>::balanceFactor()
 {
 	if (this == nullptr)
 		return 0;
 	return _left->Height() - _right->Height();
 }
-TreeNode* TreeNode::RightRotate()
+template<class TreeType>
+TreeNode<TreeType>* TreeNode<TreeType>::RightRotate()
 {
 	TreeNode* child = _left;
 	TreeNode* cchild = child->_right;
@@ -39,7 +45,8 @@ TreeNode* TreeNode::RightRotate()
 	child->_height = child->TreeHeight();
 	return child;
 }
-TreeNode* TreeNode::LefttRotate()
+template<class TreeType>
+TreeNode<TreeType>* TreeNode<TreeType>::LefttRotate()
 {
 	TreeNode* child = _right;
 	TreeNode* cchild = child->_left;
@@ -49,7 +56,8 @@ TreeNode* TreeNode::LefttRotate()
 	child->_height = child->TreeHeight();
 	return child;
 }
-TreeNode* TreeNode::rotate()
+template<class TreeType>
+TreeNode<TreeType>* TreeNode<TreeType>::rotate()
 {
 	int n = balanceFactor();
 	if (n > 1)
@@ -70,7 +78,8 @@ TreeNode* TreeNode::rotate()
 	}
 	return this;
 }
-void TreeNode::TreeDestroy()
+template<class TreeType>
+void TreeNode<TreeType>::TreeDestroy()
 {
 	if (this == nullptr)
 		return;
@@ -78,21 +87,23 @@ void TreeNode::TreeDestroy()
 	_right->TreeDestroy();
 	delete(this);
 }
-TreeNode* TreeNode::InsertHeap(TreeType val)
+template<class TreeType>
+TreeNode<TreeType>* TreeNode<TreeType>::InsertHeap(TreeType val,int (*comp)(TreeType, TreeType))
 {
 	if (this == nullptr)
 		return new TreeNode(val);
-	if (val < _val)
-		_left = _left->InsertHeap(val);
-	else if (val > _val)
-		_right = _right->InsertHeap(val);
+	if (comp(_val,val) > 0)
+		_left = _left->InsertHeap(val,comp);
+	else if (comp(_val, val) < 0)
+		_right = _right->InsertHeap(val,comp);
 	else
 		return this;
 	_height = TreeHeight();
 	TreeNode* node=rotate();
 	return node;
 }
-TreeNode* TreeNode::RemoveHelp(TreeType val)
+template<class TreeType>
+TreeNode<TreeType>* TreeNode<TreeType>::RemoveHelp(TreeType val)
 {
 	if (this == nullptr)
 		return nullptr;
@@ -134,7 +145,8 @@ TreeNode* TreeNode::RemoveHelp(TreeType val)
 	root = root->rotate();
 	return root;
 }
-TreeNode* TreeNode::search(TreeType num) 
+template<class TreeType>
+TreeNode<TreeType>* TreeNode<TreeType>::search(TreeType num)
 {
 	TreeNode* cur = this;
 	while (cur != nullptr) {
@@ -147,7 +159,8 @@ TreeNode* TreeNode::search(TreeType num)
 	}
 	return cur;
 }
-void TreeNode::InOrder()
+template<class TreeType>
+void TreeNode<TreeType>::InOrder()
 {
 	if (this == NULL)
 		return;
