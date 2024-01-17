@@ -1,18 +1,17 @@
-#include"str.h"
+#include"111.h"
 int main()
 {
-	M::string s1("hello");
-	/*M::string::const_iterator it = s2.begin();
-	while (it != s2.end())
-	{
-		cout << *it << " ";
-		++it;reverse
-	}*/
-	//s1.reserve(10);
-	s1.resize(20);
-	char* str = s1.c_str();
+	M::string s1;
+	s1.push_back('a');
+	s1.push_back('a');
+	s1.push_back('a');
+	s1.push_back('a');
+	s1.push_back('a');
+	s1.push_back('a');
 	cout << s1.capacity() << endl;
 	cout << s1.size() << endl;
-
+	cout << s1.c_str() << endl;
+	s1 += 'c';
+	cout << s1.c_str() << endl;
 	return 0;
 }
