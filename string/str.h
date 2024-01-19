@@ -185,6 +185,20 @@ namespace M
 			s += str;
 			return s;
 		}
+		string& operator= (const string& str)
+		{
+			if (this == &str)
+				return *this;
+			strcpy(_str, str.c_str());
+			return *this;
+		}
+		void swap(string& str)
+		{
+			if (this == &str)
+				return ;
+
+			_str = str.c_str();
+		}
 		static size_t npos;
 	private:
 		char* _str;
