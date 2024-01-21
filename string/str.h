@@ -196,8 +196,14 @@ namespace M
 		{
 			if (this == &str)
 				return ;
-
-			_str = str.c_str();
+			std::swap(_str, str._str);
+			std::swap(_size, str._size);
+			std::swap(_capacity, str._capacity);
+		}
+		void clear()
+		{
+			memset(_str, 0, _size);
+			_size = 0;
 		}
 		static size_t npos;
 	private:
@@ -206,4 +212,35 @@ namespace M
 		size_t _capacity;
 	};
 	size_t string::npos = -1;
+	std::ostream& operator<<(std::ostream& out, M::string& str)
+	{
+		for (int i = 0; i < str.size(); i++)
+		{
+			out << str.c_str()[i];
+		}
+		return out;
+	}
+	std::istream& operator>>(std::istream& in, M::string& str)
+	{
+		char ch=in.get();
+		char strbuff[128];
+		int i = 0;
+		while (ch != ' ' && ch != '\n')
+		{
+			strbuff[i++]=ch;
+			if (i == 127)
+			{
+				strbuff[i] = '\0';
+				str += strbuff;
+				i = 0;
+			}
+			ch = in.get();
+		}
+		if (i != 0)
+		{
+			strbuff[i] = '\0';
+			str += strbuff;
+		}
+		return in;
+	}
 }
