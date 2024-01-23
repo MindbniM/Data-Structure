@@ -38,10 +38,8 @@ namespace M
 		}
 		string(const string& str)
 		{
-			_str = new char[str.size() + 1];
-			strcpy(_str, str.c_str());
-			_capacity = str.size();
-			_size = _capacity;
+			string s(str.c_str());
+			swap(s);
 		}
 		~string()
 		{
@@ -113,16 +111,33 @@ namespace M
 			{
 				reserve(_size + str.size());
 			}
-			size_t end = pos + str.size()+_size;
-			while (end >= _size)
+			size_t end = str.size()+_size;
+			while (end > pos)
 			{
-				_str[end] = _str[end - _size];
+				_str[end] = _str[end - str.size()];
 				--end;
 			}
 			strncpy(_str + pos, str.c_str(),str.size());
 			_size += str.size();
 			return *this;
 		}
+		string& insert(size_t pos, char c)
+		{
+			if (_size + 1 > _capacity)
+			{
+				reserve(_size + 1);
+			}
+			size_t end = 1 + _size;
+			while (end > pos)
+			{
+				_str[end] = _str[end - 1];
+				--end;
+			}
+			_str[pos] = c;
+			_size ++;
+			return *this;
+		}
+
 		string& erase(size_t pos, size_t n = npos)
 		{
 			if (n == npos || n + pos >= _size)
@@ -153,6 +168,24 @@ namespace M
 				return s - _str;
 			}
 			return npos;
+		}
+		string substr(size_t pos, size_t len = string::npos)
+		{
+			assert(pos <= _size);
+			string s;
+			if (len == npos || pos+len >= _size)
+			{
+				s += (_str + pos);
+				return s;
+			}
+			while (len>0)
+			{
+				s += _str[pos];
+				pos++;
+				len--;
+			}
+			return s;
+
 		}
 		char& operator[](size_t pos)
 		{
@@ -185,11 +218,9 @@ namespace M
 			s += str;
 			return s;
 		}
-		string& operator= (const string& str)
+		string& operator= (string str)
 		{
-			if (this == &str)
-				return *this;
-			strcpy(_str, str.c_str());
+			swap(str);
 			return *this;
 		}
 		void swap(string& str)
