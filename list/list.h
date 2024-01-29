@@ -15,11 +15,11 @@ namespace M
 		}
 	};
 
-	template<class T>
+	template<class T,class CIT,class PTR>
 	struct List_iterator
 	{
 		typedef ListNode<T> Node;
-		typedef List_iterator<T> self;
+		typedef List_iterator<T,CIT,PTR> self;
 		Node* _node;
 		List_iterator(Node* node)
 			:_node(node)
@@ -39,7 +39,7 @@ namespace M
 			_node = _node->_prev;
 			return *this;
 		}
-		T& operator*() const
+		CIT operator*() const
 		{
 			return _node->_val;
 		}
@@ -51,43 +51,9 @@ namespace M
 		{
 			return _node == li._node;
 		}
-	};
-
-	template<class T>
-	struct const_List_iterator
-	{
-		typedef ListNode<T> Node;
-		typedef const_List_iterator<T> self;
-		Node* _node;
-		const_List_iterator(Node* node)
-			:_node(node)
+		PTR operator->() const
 		{
-		}
-		const_List_iterator(const self& s)
-		{
-			_node = s._node;
-		}
-		self& operator++()
-		{
-			_node = _node->_next;
-			return *this;
-		}
-		self& operator--()
-		{
-			_node = _node->_prev;
-			return *this;
-		}
-		const T& operator*() const
-		{
-			return _node->_val;
-		}
-		bool operator!=(const self& li) const
-		{
-			return _node != li._node;
-		}
-		bool operator==(const self& li) const
-		{
-			return _node == li._node;
+			return &_node->_val;
 		}
 	};
 
@@ -96,8 +62,8 @@ namespace M
 	{
 		typedef ListNode<T> Node;
 	public:
-		typedef List_iterator<T> iterator;
-		typedef const_List_iterator<T> const_iterator;
+		typedef List_iterator<T,T&,T*> iterator;
+		typedef List_iterator<T,const T&,const T*> const_iterator;
 
 		list()
 		{

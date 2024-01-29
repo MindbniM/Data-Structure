@@ -15,13 +15,12 @@ int main()
 		++begin;
 	}
 	std::cout << std::endl;
-	M::list<int> l;
-	l.resize(10, 10);
-	begin = l.begin();
-	while (begin != l.end())
+	const M::list<int> l(li);
+	M::list<int>::const_iterator b = l.begin();
+	while (b != l.end())
 	{
-		std::cout << *begin << " ";
-		++begin;
+		std::cout << b.operator->() << " ";
+		++b;
 	}
 	return 0;
 }
