@@ -14,6 +14,16 @@ public:
 	}
 };
 template<class T>
+class less<T*>
+{
+public:
+	bool operator()(T* n1,  T* n2)
+	{
+		return *n1 < *n2;
+	}
+};
+
+template<class T>
 class greater
 {
 public:
@@ -24,17 +34,16 @@ public:
 };
 int main()
 {
-	M::priority_queue<int,std::vector<int>,less<int>> st;
-	st.push(1);
-	st.push(5);
-	st.push(3);
-	st.push(6);
+	M::priority_queue<int*,std::vector<int*>,less<int*>> st;
+	st.push(new int(1));
+	st.push(new int(5));
+	st.push(new int(4));
+	st.push(new int(6));
 	while (!st.empty())
 	{
-		std::cout << st.top() << " ";
+		std::cout << *st.top() << " ";
 		st.pop();
 	}
 	std::cout << std::endl;
-	std::cout << less<int>()(1, 2) << std::endl;
 	return 0;
 }
