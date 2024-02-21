@@ -1,8 +1,7 @@
-#ifndef REVERSE
-#definr REVERSE
+
 namespace M
 {
-	template<class iterator, class refer, class ptr>//通过正向迭代器构造,默认认为正向迭代器已经实现
+	template<class iterator, class refer, class ptr>
 	class Reverse_iterator
 	{
 		typedef Reverse_iterator<iterator, refer, ptr> self;
@@ -38,10 +37,9 @@ namespace M
 		}
 		bool operator!=(const self& it)const
 		{
-			return _it!=it._it;
+			return _it != it._it;
 		}
 	private:
 		iterator _it;
 	};
 }
-#end if
