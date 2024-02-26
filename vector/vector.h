@@ -1,6 +1,7 @@
 #pragma once
 #ifndef M_VECTOR
 #define M_VECTOR
+#include"Reverse_iterator.h"
 namespace M
 {
 	template<class T>
@@ -9,6 +10,8 @@ namespace M
 	public:
 		typedef T* iterator;
 		typedef const T* const_iterator;
+		typedef Reverse_iterator<iterator, T&, T*> reverse_iterator;
+		typedef Reverse_iterator<const_iterator, const T&,const T*> const_reverse_iterator;
 		vector()
 		{}
 		vector(const vector<T>& v)
@@ -102,6 +105,14 @@ namespace M
 		const_iterator end() const
 		{
 			return _finish;
+		}
+		reverse_iterator rbegin()
+		{
+			return reverse_iterator(end());
+		}
+		reverse_iterator rend()
+		{
+			return reverse_iterator(begin());
 		}
 		T& operator[](size_t pos);
 		const T& operator[](size_t pos) const;
