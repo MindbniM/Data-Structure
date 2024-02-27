@@ -37,7 +37,7 @@ namespace M
 		}
 		bool operator!=(const self& it)const
 		{
-			return _it != it._it;
+			return _it!=it._it;
 		}
 	private:
 		iterator _it;
