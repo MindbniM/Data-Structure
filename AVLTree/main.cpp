@@ -109,11 +109,12 @@ int comp(int a, int b)
 
 int main()
 {
-	AVLTree<int> a;
-	a.Insert(1, comp);
-	a.Insert(2, comp);
-	a.Insert(6, comp);
-	a.Insert(5, comp);
-	a._root->InOrder();
+	AVLTree<int>* a=new AVLTree<int>();
+	a->Insert(1, comp);
+	a->Insert(2, comp);
+	a->Insert(6, comp);
+	a->Insert(5, comp);
+	a->_root->InOrder();
+	delete a;
 	return 0;
 }
