@@ -78,46 +78,73 @@ public:
             {
                 break;
             }
-           else if(prante->_bf==2&&root->_bf==1)
-           {
-               RotateL(prante);
-               break;
-           }
-           else if(prante->_bf==-2&&root->_bf==-1)
-           {
-               RotateR(prante);
-               break;
-           }
-           else if(prante->_bf==2&&root->_bf==-1)
-           {
-               int bf=root->_left->_bf;
-               RotateR(root);
-               RotateL(prante);
-               if(bf==1)
-               {
-                   root->_bf=1;
-               }
-               else if(bf==-1)
-               {
-                   prante->_bf=-1;
-               }
-          }
-           else if(prante->_bf==-2&&root->_bf==1)
-           {
-               int bf=root->_right->_bf;
-               RotateL(root);
-               RotateR(prante);
-               if(bf==1)
-               {
-                   root->_bf=-1;
-               }
-               else if(bf==-1)
-               {
-                   prante->_bf=1;
-               }
-           }
+            else if(prante->_bf==2&&root->_bf==1)
+            {
+                RotateL(prante);
+                break;
+            }
+            else if(prante->_bf==-2&&root->_bf==-1)
+            {
+                RotateR(prante);
+                break;
+            }
+            else if(prante->_bf==2&&root->_bf==-1)
+            {
+                Node* rl = root->_left;
+                int bf=rl->_bf;
+                RotateR(root);
+                RotateL(prante);
+                if(bf==1)
+                {
+                    rl->_bf = 0;
+                    root->_bf=1;
+                    prante->_bf = 0;
+                }
+                else if(bf==-1)
+                {
+                    rl->_bf = 0;
+                    prante->_bf=-1;
+                    root->_bf = 0;
+                }
+                break;
+            }
+            else if(prante->_bf==-2&&root->_bf==1)
+            {
+                Node* rr = root->_right;
+                int bf = rr->_bf;
+                RotateL(root);
+                RotateR(prante);
+                if(bf==1)
+                {
+                    rr->_bf = 0;
+                    root->_bf=-1;
+                    prante->_bf = 0;
+                }
+                else if(bf==-1)
+                {
+                    rr->_bf = 0;
+                    prante->_bf=1;
+                    root->_bf = 0;
+                }
+                break;
+            }
+            else
+            {
+                cout << prante->_bf<<endl;
+                cout << root->_bf<<endl;
+                assert(false);
+            }
         }
         return true;
+    }
+    void inorder()
+    {
+        _inorder(_root);
+    }
+    bool isAVLTree()
+    {
+        int h = 0;
+        return _isAVLTree(_root, h);
     }
     void order()
     {
@@ -153,6 +180,33 @@ public:
         cout<<endl;
     }
 private:
+    bool _isAVLTree(Node* root,int& h)
+    {
+        if (root == nullptr)
+        {
+            h = 0;
+            return true;
+        }
+        int Hleft = 0, Hright = 0;
+        if (!_isAVLTree(root->_left, Hleft) || !_isAVLTree(root->_right, Hright))
+            return false;
+        int n = Hright-Hleft;
+        if (abs(n) > 1 || n != root->_bf)
+        {
+            cout << "bf erory"<<endl;
+            return false;
+        }
+        h = Hleft > Hright ? Hleft+1 : Hright+1;
+        return true;
+    }
+    void _inorder(Node* root)
+    {
+        if (root == nullptr)
+            return;
+        _inorder(root->_left);
+        cout << root->_date.first << " ";
+        _inorder(root->_right);
+    }
     void RotateL(Node* root)
     {
         Node* prante=root->_prante;
@@ -167,6 +221,7 @@ private:
         if(root==_root)
         {
             _root=cur;
+            cur->_prante = nullptr;
         }
         else 
         {
@@ -198,6 +253,7 @@ private:
         if(root==_root)
         {
             _root=cur;
+            cur->_prante = nullptr;
         }
         else 
         {
