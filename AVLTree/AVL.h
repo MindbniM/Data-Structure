@@ -94,17 +94,18 @@ public:
                 int bf=rl->_bf;
                 RotateR(root);
                 RotateL(prante);
+
                 if(bf==1)
                 {
                     rl->_bf = 0;
-                    root->_bf=1;
-                    prante->_bf = 0;
+                    root->_bf=0;
+                    prante->_bf = -1;
                 }
                 else if(bf==-1)
                 {
                     rl->_bf = 0;
-                    prante->_bf=-1;
-                    root->_bf = 0;
+                    prante->_bf=0;
+                    root->_bf = 1;
                 }
                 break;
             }
@@ -151,23 +152,23 @@ public:
         if(_root==nullptr)
             return;
         int i=1,j=0;
-        stack<Node*> st;
+        queue<Node*> st;
         Node* root=_root;
         st.push(root);
         while(!st.empty())
         {
-            Node* top=st.top();
+            Node* top=st.front();
             cout<<(top->_date.first)<<" ";
             st.pop();
             i--;
-            if(top->_right!=nullptr)
-            {
-                st.push(top->_right);
-                j++;
-            }
             if(top->_left!=nullptr)
             {
                 st.push(top->_left);
+                j++;
+            }
+            if(top->_right!=nullptr)
+            {
+                st.push(top->_right);
                 j++;
             }
             if(i==0)
@@ -194,6 +195,7 @@ private:
         if (abs(n) > 1 || n != root->_bf)
         {
             cout << "bf erory"<<endl;
+            cout << root->_date.first << "->" << root->_bf<<endl;
             return false;
         }
         h = Hleft > Hright ? Hleft+1 : Hright+1;
