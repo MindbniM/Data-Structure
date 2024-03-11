@@ -50,6 +50,23 @@ struct RBTreeiterator
 		}
 		return *this;
 	}
+	self operator++(int)
+	{
+		self temp(*this);
+		if (_root->_right != nullptr)
+		{
+			_root = _root->_right;
+			while (_root->_left != nullptr)
+				_root = _root->_left;
+		}
+		else
+		{
+			while (_root->_prante != nullptr && _root != _root->_prante->_left)
+				_root = _root->_prante;
+			_root = _root->_prante;
+		}
+		return temp;
+	}
 	bool operator!=(const self& rb)
 	{
 		return _root != rb._root;
@@ -57,6 +74,16 @@ struct RBTreeiterator
 	bool operator==(const self& rb)
 	{
 		return _root == rb._root;
+	}
+	self operator+(int num)
+	{
+		self temp(*this);
+		while (num)
+		{
+			++temp;
+			num--;
+		}
+		return temp;
 	}
 	refer operator*()
 	{
