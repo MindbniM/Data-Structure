@@ -31,15 +31,28 @@ struct Hashfun<std::string>
 	}
 };
 template<class K, class T, class koft, class Hash>
+class hash_bucket;
+template<class K, class T, class koft, class Hash>
 struct hash_iterator
 {
 	typedef hashnode<T> node;
 	typedef hash_bucket<K, T, koft, Hash> hash;
-	hash_iterator(node* data, hash* h)
+	typedef hash_iterator<K, T, koft, Hash> self;
+	hash_iterator(node* n, hash* h)
+		:_n(n)
+		,_h(h)
 	{
-
 	}
-	node* _data;
+	self operator++()
+	{
+		if (_n->_next != nullptr)
+			_n = _n->_next;
+		else
+		{
+			
+		}
+	}
+	node* _n;
 	hash* _h;
 };
 template<class K,class T,class koft,class Hash=Hashfun<T>>
