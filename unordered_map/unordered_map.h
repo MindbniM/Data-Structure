@@ -32,6 +32,10 @@ public:
 	{
 		return hash.erase(key);
 	}
+	size_t size()
+	{
+		return hash.size();
+	}
 private:
 	hash_bucket<K, std::pair<K, T>, koft, Hash> hash;
 };
