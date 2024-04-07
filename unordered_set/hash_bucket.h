@@ -175,6 +175,10 @@ public:
 		}
 		return iterator(nullptr,this);
 	}
+	size_t size()
+	{
+		return _size;
+	}
 	iterator erase(const K& key)
 	{
 		Hash H;
