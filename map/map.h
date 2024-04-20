@@ -31,6 +31,10 @@ public:
 	{
 		return _root.end();
 	}
+	bool count(K& data)
+	{
+		return count(data);
+	}
 private:
 	
 	Tree _root;
