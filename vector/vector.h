@@ -22,6 +22,13 @@ namespace M
 				push_back(e);
 			}
 		}
+		vector(std::initializer_list<T> li)
+		{
+			for (auto& i : li)
+			{
+				push_back(i);
+			}
+		}
 		template<class ITERATOR>
 		vector(ITERATOR begin, ITERATOR end)
 		{
@@ -117,6 +124,7 @@ namespace M
 		T& operator[](size_t pos);
 		const T& operator[](size_t pos) const;
 		vector<T>& operator=(vector<T> v);
+		vector<T>& operator=(std::initializer_list<T> li);
 	private:
 		iterator _start=nullptr;
 		iterator _finish=nullptr;
@@ -214,6 +222,13 @@ namespace M
 	template<class T>
 	vector<T>& vector<T>::operator=( vector<T> v)
 	{
+		swap(v);
+		return *this;
+	}
+	template<class T>
+	vector<T>& vector<T>::operator=(std::initializer_list<T> li)
+	{
+		vector<T> v(li);
 		swap(v);
 		return *this;
 	}
