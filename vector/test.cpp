@@ -7,16 +7,6 @@
 #include"vector.h"
 int main()
 {
-	M::vector<char> v;
-	v.push_back('a');
-	v.push_back('b');
-	v.push_back('c');
-	v.push_back('d');
-	M::vector<char>::reverse_iterator rit = v.rbegin();
-	while (rit != v.rend())
-	{
-		std::cout << *rit << " ";
-		++rit;
-	}
+	M::vector<int> v = { 1,2,3,5,6 };
 	return 0;
 }
