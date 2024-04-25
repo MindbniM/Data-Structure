@@ -22,6 +22,10 @@ namespace M
 				push_back(e);
 			}
 		}
+		vector(vector<T> && v)
+		{
+			swap(v);
+		}
 		vector(std::initializer_list<T> li)
 		{
 			for (auto& i : li)
@@ -44,8 +48,10 @@ namespace M
 			_start = _finish = _end = nullptr;
 		}
 		void push_back(const T& val);
+		void push_back(T&& val);
 		void pop_back();
 		void insert(iterator pos,const T& val);
+		void insert(iterator pos,T&& val);
 		iterator erase(iterator pos)
 		{
 			assert(size());
@@ -123,13 +129,20 @@ namespace M
 		}
 		T& operator[](size_t pos);
 		const T& operator[](size_t pos) const;
-		vector<T>& operator=(vector<T> v);
+		vector<T>& operator=(const vector<T>& v);
+		vector<T>& operator=(vector<T>&& v);
 		vector<T>& operator=(std::initializer_list<T> li);
 	private:
 		iterator _start=nullptr;
 		iterator _finish=nullptr;
 		iterator _end=nullptr;
 	};
+	template<class T>
+	vector<T>& vector<T>::operator=(vector<T>&& v)
+	{
+		swap(v);
+		return *this;
+	}
 	template<class T>
 	void vector<T>::push_back(const T& val)
 	{
@@ -142,10 +155,42 @@ namespace M
 		++_finish;
 	}
 	template<class T>
+	void vector<T>::push_back(T&& val)
+	{
+		if (_finish == _end)
+		{
+			size_t newcapacity = capacity() == 0 ? 4 : 2 * capacity();
+			reserve(newcapacity);
+		}
+		*_finish = std::move(val);
+		++_finish;
+	}
+	template<class T>
 	void vector<T>::pop_back()
 	{
 		assert(size());
 		--_finish;
+	}
+	template<class T>
+	void vector<T>::insert(iterator pos, T && val)
+	{
+		assert(_start <= pos);
+		assert(_finish >= pos);
+		if (_finish == _end)
+		{
+			size_t n = pos - _start;
+			size_t newcapacity = capacity() == 0 ? 4 : 2 * capacity();
+			reserve(newcapacity);
+			pos = _start + n;
+		}
+		_finish++;
+		iterator end = _finish - 1;
+		while (end != pos)
+		{
+			*end = *(end - 1);
+			end--;
+		}
+		*pos = std::move(val);
 	}
 	template<class T>
 	void vector<T>::insert(iterator pos,const T& val)
@@ -220,9 +265,12 @@ namespace M
 		return *(_start + pos);
 	}
 	template<class T>
-	vector<T>& vector<T>::operator=( vector<T> v)
+	vector<T>& vector<T>::operator=(const vector<T>& v)
 	{
-		swap(v);
+		for (auto& i : v)
+		{
+			push_back(i);
+		}
 		return *this;
 	}
 	template<class T>
