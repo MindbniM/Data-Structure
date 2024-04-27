@@ -20,6 +20,13 @@ namespace M
 			,_val(std::forward<T>(val))
 		{
 		}
+		template<class ...Args>
+		ListNode(Args&& ...args)
+			: _prev(nullptr)
+			, _next(nullptr)
+			, _val(std::forward<Args>(args)...)
+		{
+		}
 	};
 
 	template<class T,class CIT,class PTR>
@@ -135,7 +142,12 @@ namespace M
 		template<class ...Args>
 		void emplace_back(Args&&...args)
 		{
-			emplace(end(), args...);
+			emplace(end(), std::forward<Args>(args)...);
+		}
+		template<class ...Args>
+		void emplace_front(Args&&...args)
+		{
+			emplace(begin(), std::forward<Args>(args)...);
 		}
 		iterator insert(iterator it,const T& val)
 		{
