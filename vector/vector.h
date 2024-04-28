@@ -52,6 +52,17 @@ namespace M
 		void pop_back();
 		void insert(iterator pos,const T& val);
 		void insert(iterator pos,T&& val);
+		template<class... Args>
+		void emplace_back(Args... args)
+		{
+			if (_finish == _end)
+			{
+				size_t newcapacity = capacity() == 0 ? 4 : 2 * capacity();
+				reserve(newcapacity);
+			}
+			*_finish =T(std::forward<Args>(args)...) ;
+			++_finish;
+		}
 		iterator erase(iterator pos)
 		{
 			assert(size());
@@ -162,7 +173,7 @@ namespace M
 			size_t newcapacity = capacity() == 0 ? 4 : 2 * capacity();
 			reserve(newcapacity);
 		}
-		*_finish = std::move(val);
+		*_finish = std::forward<T>(val);
 		++_finish;
 	}
 	template<class T>
