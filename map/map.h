@@ -31,9 +31,9 @@ public:
 	{
 		return _root.end();
 	}
-	bool count(K& data)
+	bool count(const K& data)
 	{
-		return count(data);
+		return _root.count(data);
 	}
 private:
 	
