@@ -230,6 +230,27 @@ public:
 		_root->_c = Black;
 		return std::pair<iterator, bool>(p, true);
 	}
+	bool count(const K & data)
+	{
+		kofv key;
+		Node* cur = _root;
+		while (cur != nullptr)
+		{
+			if (key(cur->_data) < data)
+			{
+				cur = cur->_right;
+			}
+			else if (data < key(cur->_data))
+			{
+				cur = cur->_left;
+			}
+			else
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 	/*bool isRBTree()
 	{
 		int blacksize = 0;
