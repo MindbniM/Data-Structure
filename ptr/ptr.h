@@ -64,6 +64,9 @@ class shared_ptr
 public:
 	shared_ptr(T* data) :_ptr(data),_count(new int(1))
 	{}
+	template<class D>
+	shared_ptr(T* data,D del):_ptr(data),_count(new int(1)),_del(del)
+	{}
 	shared_ptr(const shared_ptr<T>& ptr)
 	{
 		_ptr = ptr._ptr;
@@ -102,8 +105,9 @@ private:
 	{
 		if (--(*_count) == 0)
 		{
-			std::cout << "delete ptr " << *_ptr<<std::endl;
-			delete _ptr;
+			//std::cout << "delete ptr " << *_ptr<<std::endl;
+			//_del(_ptr);
+			_del(_ptr);
 			delete _count;
 			_ptr = nullptr;
 			_count = nullptr;
@@ -111,6 +115,7 @@ private:
 	}
 	T* _ptr;
 	int* _count;
+	std::function<void(T*)> _del = [](T* ptr) {delete ptr; };
 };
 template<class T>
 class weak_ptr
@@ -121,7 +126,7 @@ public:
 	{
 		_ptr = ptr.get();
 	}
-	weak_ptr(const weak_ptr<T> ptr)
+	weak_ptr(const weak_ptr<T>& ptr)
 	{
 		_ptr = ptr._ptr;
 	}
