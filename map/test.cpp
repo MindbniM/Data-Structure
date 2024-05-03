@@ -55,11 +55,14 @@
 int main()
 {
 	map<std::string, int> hash;
-	std::vector<std::string> v{ "5","1","1","6","5","7","9","0","0"};
+	std::vector<std::string> v{ "5","1","6","7","9"};
 	for (auto& s : v)
 	{
 		hash[s]++;
 	}
-	std::cout << hash.count("8");
+	//hash.clear();
+	hash.emplace("0", 20);
+	std::cout << hash.size() << std::endl;
+	std::cout << hash["0"] << std::endl;
 	return 0;
 }

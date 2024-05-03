@@ -21,6 +21,15 @@ struct RBTreeNode
 		, _data(data)
 	{
 	}
+	template<class ...Args>
+	RBTreeNode(Args&&... args)
+		:_prante(nullptr)
+		, _left(nullptr)
+		, _right(nullptr)
+		, _c(Red)
+		, _data(std::forward<Args>(args)...)
+	{
+	}
 };
 template<class T>
 struct RBTreeiterator
@@ -102,6 +111,7 @@ class RBTree
 {
 	typedef RBTreeNode<V> Node;
 public:
+	typedef RBTree<K, V, kofv> self;
 	typedef RBTreeiterator<V> iterator;
 	typedef RBTreeiterator<V> const_iterator;
 	iterator begin()
@@ -125,6 +135,115 @@ public:
 	const_iterator end()const
 	{
 		return nullptr;
+	}
+	void swap(self& tree)
+	{
+		std::swap(_root, tree._root);
+	}
+	template<class ...Args>
+	std::pair<iterator, bool> emplace(Args&&... args)
+	{
+		kofv key;
+		if (_root == nullptr)
+		{
+			_root = new Node(std::forward<Args>(args)...);
+			_root->_c = Black;
+			return std::pair<iterator, bool>(_root, true);
+		}
+		Node* prante = _root->_prante;
+		Node* cur = _root;
+		while (cur != nullptr)
+		{
+			if (key(cur->_data) < key(std::forward<Args>(args)...))
+			{
+				prante = cur;
+				cur = cur->_right;
+			}
+			else if (key(std::forward<Args>(args)...)< key(cur->_data))
+			{
+				prante = cur;
+				cur = cur->_left;
+			}
+			else
+			{
+				return std::pair<iterator, bool>(cur, false);
+			}
+		}
+		Node* node = new Node(std::forward<Args>(args)...);
+		Node* p = node;
+		if (key(prante->_data) < key(std::forward<Args>(args)...))
+		{
+			prante->_right = node;
+			node->_prante = prante;
+		}
+		else
+		{
+			prante->_left = node;
+			node->_prante = prante;
+		}
+		while (prante != nullptr && prante->_c == Red)
+		{
+			Node* gp = prante->_prante;
+			Node* u = gp->_left;
+			if (prante == gp->_left)
+			{
+				u = gp->_right;
+			}
+			if (u != nullptr && u->_c == Red)
+			{
+				prante->_c = Black;
+				u->_c = Black;
+				gp->_c = Red;
+				node = gp;
+				prante = node->_prante;
+			}
+			else
+			{
+				if (node == prante->_left)
+				{
+					if (prante == gp->_left)
+					{
+						rotateR(gp);
+						gp->_c = Red;
+						prante->_c = Black;
+						node = prante;
+						prante = prante->_prante;
+					}
+					else
+					{
+						rotateR(prante);
+						rotateL(gp);
+
+						gp->_c = Red;
+						node->_c = Black;
+						prante = node->_prante;
+					}
+
+				}
+				else if (node == prante->_right)
+				{
+					if (prante == gp->_right)
+					{
+						rotateL(gp);
+						gp->_c = Red;
+						prante->_c = Black;
+						node = prante;
+						prante = prante->_prante;
+					}
+					else
+					{
+						rotateL(prante);
+						rotateR(gp);
+						gp->_c = Red;
+						node->_c = Black;
+						prante = node->_prante;
+					}
+				}
+				break;
+			}
+		}
+		_root->_c = Black;
+		return std::pair<iterator, bool>(p, true);
 	}
 	std::pair<iterator,bool> insert(const V& value)
 	{
@@ -251,6 +370,19 @@ public:
 		}
 		return false;
 	}
+	size_t size()
+	{
+		return _size(_root);
+	}
+	bool empty()
+	{
+		return _root == nullptr;
+	}
+	void clear()
+	{
+		_destroy(_root);
+		_root = nullptr;
+	}
 	/*bool isRBTree()
 	{
 		int blacksize = 0;
@@ -292,6 +424,11 @@ private:
 		}
 		return _isRBTree(root->_left, num, blacksize)&&_isRBTree(root->_right,num,blacksize);
 	}*/
+	size_t _size(Node* root)
+	{
+		if (root == nullptr) return 0;
+		return _size(root->_left) + _size(root->_right)+1;
+	}
 	void rotateR(Node* cur)
 	{
 		Node* prante = cur->_prante;

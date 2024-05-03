@@ -9,18 +9,42 @@ class map
 		{
 			return v.first;
 		}
+		template<class ...Args>
+		const K operator()(const K k,Args&&... args)
+		{
+			return k;
+		}
 	};
 public:
+	map()
+	{}
 	typedef RBTree<K, std::pair<const K, V>, kofv> Tree;
 	typedef typename Tree::iterator iterator;
+	typedef std::pair<const K, V> value_type;
 	typedef typename Tree::const_iterator const_iterator;
+	map(std::initializer_list<value_type> li)
+	{
+		for (auto& i : li)
+		{
+			insert(i);
+		}
+	}
+	map(map<K, V>&& mp)
+	{
+		_root.swap(mp._root);
+	}
 	std::pair<iterator, bool> insert( const std::pair<const K,V>& data)
 	{
 		return _root.insert(data);
 	}
-	V& operator[](K& data)
+	template<class ...Args>
+	std::pair<iterator, bool> emplace(Args&&... args)
 	{
-		std::pair<iterator, bool> p = insert(make_pair(data,V()));
+		return _root.emplace(std::forward<Args>(args)...);
+	}
+	V& operator[](const K& data)
+	{
+		std::pair<iterator, bool> p = insert(std::make_pair(data,V()));
 		return p.first->second;
 	}
 	iterator begin()
@@ -35,7 +59,18 @@ public:
 	{
 		return _root.count(data);
 	}
+	size_t size()
+	{
+		return _root.size();
+	}
+	bool empty()
+	{
+		return _root.empty();
+	}
+	void clear()
+	{
+		_root.clear();
+	}
 private:
-	
 	Tree _root;
 };
