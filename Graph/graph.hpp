@@ -102,9 +102,51 @@ namespace matrix
 			throw run_exception("图不是联通的\n");
 
 		}
-		W prim()
+		W prim(const V& v)
 		{
-
+			if (!_map.count(v)) throw run_exception("不存在该点\n");
+			int p = _map[v];
+			int n = _vv.size();
+			std::vector<bool> x(n, false);
+			std::vector<bool> y(n, true);
+			x[p] = true;
+			y[p] = false;
+			std::priority_queue<edge<W>, std::vector<edge<W>>, std::greater<edge<W>>> q;
+			std::vector<std::vector<W>> vv(n,std::vector<W>(n,invalid));
+			for (int i = 0; i < n; i++)
+			{
+				if (_vv[p][i] != invalid) q.push(edge<W>(p, i, _vv[p][i]));
+			}
+			W num = W();
+			int ret = 0;
+			while (!q.empty())
+			{
+				edge<W> e = q.top();
+				q.pop();
+				if (!(x[e._begin] && x[e._end]))
+				{
+					x[e._end] = true;
+					y[e._end] = false;
+					vv[e._begin][e._end] = _vv[e._begin][e._end];
+					std::cout << _hash[e._begin] << "->" << _hash[e._end] << std::endl;
+					if (!Direction)
+					{
+						vv[e._end][e._begin] = _vv[e._end][e._begin];
+					}
+					ret++;
+					for (int i = 0; i < n; i++)
+					{
+						if (_vv[e._end][i] != invalid&& !(x[e._end] && x[i]))
+							q.push(edge<W>(e._end, i, _vv[e._end][i]));
+					}
+				}
+			}
+			if (ret == n - 1)
+			{
+				print(vv);
+				return num;
+			}
+			throw run_exception("图不是联通的\n");
 		}
 	private:
 		void print(std::vector<std::vector<W>>& vv)
