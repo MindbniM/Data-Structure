@@ -16,6 +16,5 @@ int main()
 	g.insert_edge('g', 'h', 1);
 	g.insert_edge('g', 'i', 6);
 	g.insert_edge('h', 'i', 7);
-	g.prim('a');
 	return 0;
 }
