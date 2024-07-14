@@ -62,16 +62,18 @@ template<class T>
 class shared_ptr
 {
 public:
-	shared_ptr(T* data) :_ptr(data),_count(new int(1))
+	shared_ptr(T* data) :_ptr(data),_count(new int(1)),_m(new std::mutex)
 	{}
 	template<class D>
-	shared_ptr(T* data,D del):_ptr(data),_count(new int(1)),_del(del)
+	shared_ptr(T* data,D del):_ptr(data),_count(new int(1)),_del(del),_m(new std::mutex)
 	{}
 	shared_ptr(const shared_ptr<T>& ptr)
 	{
 		_ptr = ptr._ptr;
 		_count = ptr._count;
-		(*_count)++;
+		_m = ptr._m;
+		std::lock_guard<std::mutex> lock(*_m);
+		++(*_count);
 	}
 	~shared_ptr()
 	{
@@ -92,9 +94,15 @@ public:
 			remove();
 			_ptr = ptr._ptr;
 			_count = ptr._count;
-			(*_count)++;
+			_m = ptr._m;
+			std::lock_guard<std::mutex> lock(*_m);
+			++(*_count);
 		}
 		return *this;
+	}
+	int count()
+	{
+		return *_count;
 	}
 	T* get()
 	{
@@ -103,18 +111,27 @@ public:
 private:
 	void remove()
 	{
-		if (--(*_count) == 0)
+		_m->lock();
+		bool flag = false;
+		if (--(*_count) == 0&&_ptr)
 		{
-			//std::cout << "delete ptr " << *_ptr<<std::endl;
-			//_del(_ptr);
+			std::cout << "delete ptr "<<std::endl;
 			_del(_ptr);
 			delete _count;
 			_ptr = nullptr;
 			_count = nullptr;
+			flag = true;
 		}
+		_m->unlock();
+		if (flag)
+		{
+			delete _m;
+		}
+	
 	}
 	T* _ptr;
 	int* _count;
+	std::mutex* _m;
 	std::function<void(T*)> _del = [](T* ptr) {delete ptr; };
 };
 template<class T>
