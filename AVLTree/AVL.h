@@ -140,7 +140,26 @@ public:
     }
     void inorder()
     {
-        _inorder(_root);
+        Node* root = _root;
+        if (root == nullptr) return;
+        while (root->_left != nullptr)
+            root = root->_left;
+        while (root != nullptr)
+        {
+            cout << root->_date.first << " ";
+            if (root->_right != nullptr)
+            {
+                root = root->_right;
+                while (root->_left != nullptr)
+                    root = root->_left;
+            }
+            else
+            {
+                while (root->_prante!=nullptr&&root != root->_prante->_left)
+                    root = root->_prante;
+                root = root->_prante;
+            }
+        }
     }
     bool isAVLTree()
     {
