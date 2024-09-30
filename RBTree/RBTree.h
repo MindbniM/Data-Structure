@@ -1,9 +1,14 @@
 #pragma once
+
 enum color
 {
 	Red,
 	Black,
 };
+
+
+
+
 template<class T>
 struct RBTreeNode
 {
@@ -31,6 +36,11 @@ struct RBTreeNode
 	{
 	}
 };
+
+
+
+
+
 template<class T>
 struct RBTreeiterator
 {
@@ -106,6 +116,12 @@ struct RBTreeiterator
 	}
 	Node* _root=nullptr;
 };
+
+
+
+
+
+
 template<class K,class V,class kofv>
 class RBTree
 {
