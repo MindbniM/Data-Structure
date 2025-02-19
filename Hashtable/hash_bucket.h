@@ -43,14 +43,46 @@ struct hash_iterator
 		,_h(h)
 	{
 	}
-	self operator++()
+	hash_iterator(const self& it)
+		:_n(it._n)
+		, _h(it._h)
+	{
+	}
+	self& operator++()
 	{
 		if (_n->_next != nullptr)
 			_n = _n->_next;
 		else
 		{
-			
+			koft k;
+			Hash H;
+			int hashi = H(k(_n->_data)) % _h->_v.size();
+			hashi++;
+			while (hashi < _h->_v.size())
+			{
+				if (_h->_v[hashi] != nullptr)
+				{
+					_n = _h->_v[hashi];
+					break;
+				}
+				hashi++;
+			}
+			if (hashi == _h->_v.size())
+				_n = nullptr;
 		}
+		return *this;
+	}
+	T& operator*()
+	{
+		return _n->_data;
+	}
+	bool operator!=(const self& it)
+	{
+		return _n != it._n;
+	}
+	bool operator==(const self& it)
+	{
+		return (_n == it._n) && (_h == it._h);
 	}
 	node* _n;
 	hash* _h;
@@ -58,8 +90,25 @@ struct hash_iterator
 template<class K,class T,class koft,class Hash=Hashfun<T>>
 class hash_bucket
 {
+	template<class K, class T, class koft, class Hash>
+	friend struct hash_iterator;
 	typedef hashnode<T> node;
 public:
+	typedef hash_iterator<K, T, koft, Hash> iterator;
+	iterator begin()
+	{
+		int hashi = 0;
+		while (hashi<_v.size()&&_v[hashi] == nullptr)
+		{
+			hashi++;
+		}
+		if (hashi == _v.size()) return iterator(nullptr, this);
+		return iterator(_v[hashi], this);
+	}
+	iterator end()
+	{
+		return iterator(nullptr, this);
+	}
 	hash_bucket(size_t size = 10)
 	{
 		_v.resize(size, nullptr);
@@ -78,12 +127,14 @@ public:
 			_v[i] = nullptr;
 		}
 	}
-	bool insert(const T& data)
+	std::pair<iterator,bool> insert(const T& data)
 	{
 		Hash H;
-		if (find(data)) return false;
+		koft k;
+		iterator it = find(k(data));
+		if (it != end()) return std::make_pair(it,false);
 		double bf = _size * 1.0 / _v.size();
-		if (bf == 1)
+		if (bf >= 1)
 		{
 			size_t newsize = _v.size() * 2;
 			std::vector<node*> v(newsize,nullptr);
@@ -93,7 +144,7 @@ public:
 				while (n)
 				{
 					node* p = n->_next;
-					size_t newhashi = n->_data % newsize;
+					size_t newhashi = H(k(n->_data)) % newsize;
 					node* next = v[newhashi];
 					v[newhashi] = n;
 					n->_next = next;
@@ -104,48 +155,61 @@ public:
 			_v.swap(v);
 		}
 		node* n = new hashnode<T>(data);
-		size_t hashi = H(data) % _v.size();
+		size_t hashi = H(k(data)) % _v.size();
 		node* next = _v[hashi];
 		_v[hashi] = n;
 		n->_next = next;
 		_size++;
-		return true;
+		return std::make_pair(iterator(n,this),true);
 	}
-	node* find(const K& key)
+	iterator find(const K& key)
 	{
 		Hash H;
+		koft k;
 		size_t hashi = H(key) % _v.size();
 		node* n = _v[hashi];
 		while (n)
 		{
-			if (k(n->_data) == key) return n;
+			if (k(n->_data) == key) return iterator(n,this);
 			n = n->_next;
 		}
-		return nullptr;
+		return iterator(nullptr,this);
 	}
-	bool erase(const K& key)
+	size_t size()
+	{
+		return _size;
+	}
+	iterator erase(const K& key)
 	{
 		Hash H;
-		koft k;
-		if (find(key) == nullptr) return false;
+		koft ko;
+		node* next=nullptr;
+		if (find(key) == end()) return end();
 		size_t hashi = H(key) % _v.size();
 		node* n = _v[hashi];
-		if (n->_data == key)
+		if (ko(n->_data) == key)
 		{
 			_v[hashi] = n->_next;
 			delete n;
+			next = _v[hashi];
+			if (next == nullptr)
+			{
+				while (hashi < _v.size() && _v[hashi] == nullptr) hashi++;
+			}
+			if (hashi == _v.size())next = nullptr;
+			else next = _v[hashi];
 		}
 		else
 		{
-			while (k(n->_next->_data) != key)
+			while (ko(n->_next->_data) != key)
 			{
 				n = n->_next;
 			}
-			node* next = n->_next;
+			next = n->_next;
 			n->_next = n->_next->_next;
 			delete next;
 		}
-		return true;
+		return iterator(next,this);
 	}
 private:
 	size_t _size = 0;
